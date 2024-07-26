@@ -1,0 +1,13 @@
+html,
+body,
+#app {
+  height: 100%;
+  margin: auto;
+  padding: 0;
+  touch-action: none;
+  max-width: 750px;
+}
+
+html.dark {
+  background: #121212;
+}
