@@ -52,7 +52,7 @@ export const puppyDb: Puppy[] = [
     avatar: Other1,
     name: '中亚牧羊犬',
     age: 8,
-    profile: 'intp 🏂 🥏 no one no fwb thx',
+    profile: 'intp 🏂 🥏 no ons no fwb thx',
   },
   {
     type: PUPPIES_KEY.OTHERS,
@@ -386,7 +386,9 @@ export const usePuppyStore = defineStore('puppy', () => {
   })
 
   const nextRecord = computed(() => {
-    if (!currentPuppyName.value) { return null }
+    if (!currentPuppyName.value) {
+      return null
+    }
     if (chatHistoryProgress.value[currentPuppyName.value] < chatHistory[currentPuppyName.value].length) {
       return chatHistory[currentPuppyName.value][chatHistoryProgress.value[currentPuppyName.value] + 1]
     }
