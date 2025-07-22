@@ -11,8 +11,10 @@ const { matchedPuppies } = storeToRefs(puppyStore)
     <div w-full flex justify-center>
       <Woofle />
     </div>
-    <div w-full flex flex-1 flex-col items-start justify-start>
-      <div>消息</div>
+    <div w-full text-left>
+      消息
+    </div>
+    <div w-full flex flex-1 flex-col items-start justify-start overflow-auto>
       <PuppyChatCard
         v-for="puppy in matchedPuppies" :key="puppy.name" :avatar="puppy.avatar" :name="puppy.name" :latest-message="puppy.lastMessage" :waiting="puppy.waiting"
       />

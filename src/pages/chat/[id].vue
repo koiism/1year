@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { CHAT_SOURCE, PUPPIES_KEY, usePuppyStore } from '~/stores/puppy'
+import { CHAT_SOURCE, PUPPIES_KEY } from '~/constants/chatHistory'
+import type { puppyNames } from '~/constants/chatHistory'
+import { usePuppyStore } from '~/stores/puppy'
 
 const containerRef = ref<HTMLDivElement>()
 
 const route = useRoute<'/chat/[id]'>()
 const puppyStore = usePuppyStore()
-puppyStore.currentPuppyName = route.params.id
+puppyStore.currentPuppyName = route.params.id as puppyNames
 const { currentPuppy, nextRecord } = storeToRefs(puppyStore)
 function next() {
   puppyStore.next()
@@ -45,21 +47,21 @@ watch(nextRecord, () => {
     <div relative h-15 flex flex-none items-center justify-center>
       <RouterLink to="/chat" i-carbon-chevron-left absolute bottom-0 left-0 top-0 m-auto h-6 w-6 text-gray-4 />
       <div flex flex-col items-center justify-center gap-1>
-        <img :src="currentPuppy.avatar" h-8 w-8 rounded-full object-cover>
+        <img :src="currentPuppy?.avatar" h-8 w-8 rounded-full object-cover>
         <div text-center text-xs text-gray-4>
-          {{ currentPuppy.name }}
+          {{ currentPuppy?.name }}
         </div>
       </div>
     </div>
     <div ref="containerRef" flex-1 overflow-auto pb-6>
-      <div v-if="currentPuppy.type !== PUPPIES_KEY.PI_DAN_MOE" pt-2 text-xs text-gray-4>
-        你已于 2024/7/27 与 {{ currentPuppy.name }} 配对
+      <div v-if="currentPuppy?.type !== PUPPIES_KEY.PI_DAN_MOE" pt-2 text-xs text-gray-4>
+        你已于 {{ `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDate()}` }} 与 {{ currentPuppy?.name }} 配对
       </div>
       <div v-else pt-2 text-xs text-gray-4>
-        你已于 2023/6/27 与 {{ currentPuppy.name }} 配对
+        你已于 2023/6/27 与 {{ currentPuppy?.name }} 配对
       </div>
       <TransitionGroup name="list" tag="ul">
-        <div v-for="(record, index) in currentPuppy.chatHistory" :key="index" flex flex-col items-start justify-start gap-1 p-2>
+        <div v-for="(record, index) in currentPuppy?.chatHistory" :key="index" flex flex-col items-start justify-start gap-1 p-2>
           <div v-if="record.from === CHAT_SOURCE.ME" w-full flex justify-end>
             <div rounded-full rounded-br-0 bg-blue-5 px-3 py-1 text-align-start text-sm>
               {{ record.content }}
@@ -80,8 +82,11 @@ watch(nextRecord, () => {
       <div
         min-h-8 w-full flex items-center justify-between rounded-full px-6 py-1 text-align-start ring-1 ring-gray-6
       >
-        <template v-if="puppyStore.nextRecord?.from === CHAT_SOURCE.ME">
-          <input v-model="inputValue" flex-1 bg-transparent outline-none :disabled="!nextRecord?.input">
+        <template v-if="nextRecord?.from === CHAT_SOURCE.ME && (nextRecord.isUnlocked ? nextRecord.isUnlocked() : true)">
+          <p v-if="!nextRecord.input">
+            {{ inputValue }}
+          </p>
+          <input v-else v-model="inputValue" flex-1 bg-transparent outline-none :disabled="!nextRecord?.input" placeholder="输入正确答案后才能发送">
           <div flex flex-none items-center justify-end>
             <div
               v-if="inputValue === nextRecord?.content"

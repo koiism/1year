@@ -1,14 +1,28 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import type { Puppy } from '~/stores/puppy'
-import { PUPPIES_KEY, usePuppyStore } from '~/stores/puppy'
+import type { Puppy, PuppyCouldBeMatched } from '~/constants/chatHistory'
+import { OTHER_PUPPIES_KEY } from '~/constants/chatHistory'
+import { usePuppyStore } from '~/stores/puppy'
 
 const puppyStore = usePuppyStore()
-const { puppies } = storeToRefs(puppyStore)
+const { puppiesChooseList, puppiesStatus } = storeToRefs(puppyStore)
+
+const resortedPuppies = ref(puppiesChooseList.value)
+
+onBeforeMount(() => {
+  function shuffle(array: any[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]]
+    }
+    return array
+  }
+  resortedPuppies.value = shuffle(puppiesChooseList.value)
+})
 
 const matched = reactive({
   show: false,
-  img: puppies.value[0].avatar,
+  img: resortedPuppies.value[0].avatar,
 })
 const matchedImg = computed(() => (`url(${matched.img})`))
 
@@ -27,15 +41,16 @@ const matchTxtCls = computed(() => {
 })
 
 function onLike(puppy: Puppy) {
-  if (puppy.type === PUPPIES_KEY.OTHERS) {
+  if (puppy.type === OTHER_PUPPIES_KEY) {
     return
   }
-  puppy.matched = true
+
+  puppiesStatus.value[(puppy as PuppyCouldBeMatched).name].matched = true
   matched.img = puppy.avatar
   matched.show = true
   setTimeout(() => {
     matched.show = false
-  }, 3000)
+  }, 1000)
 }
 function onNope() {
 }
@@ -66,7 +81,7 @@ function onNope() {
         <div i-emojione-loudly-crying-face />
         没有小狗啦~
       </div>
-      <WoofleCard v-for="(puppy, index) in puppies" :key="index" class="woofle-card" :puppy="puppy" @like="onLike" @nope="onNope" />
+      <WoofleCard v-for="(puppy, index) in resortedPuppies" :key="index" class="woofle-card" :puppy="puppy" @like="onLike" @nope="onNope" />
     </div>
     <WoofleFooter />
   </div>
