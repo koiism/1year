@@ -25,21 +25,33 @@ function send() {
   }
 }
 const inputValue = ref('')
+const timer = ref()
 watch(nextRecord, () => {
-  if (nextRecord.value?.from !== CHAT_SOURCE.ME) {
-    setTimeout(() => {
-      next()
-    }, 1000)
-  }
-  else {
-    if (nextRecord.value.input) {
-      inputValue.value = ''
+  inputValue.value = ''
+  setTimeout(() => {
+    if (nextRecord.value?.from !== CHAT_SOURCE.ME) {
+      setTimeout(() => {
+        next()
+      }, 500)
     }
     else {
-      inputValue.value = nextRecord.value.content
+      if (!nextRecord.value?.input) {
+        let i = 0
+        clearInterval(timer.value)
+        timer.value = setInterval(() => {
+          inputValue.value += nextRecord.value?.content[i]
+          i++
+          if (i === nextRecord.value?.content.length) {
+            clearInterval(timer.value)
+          }
+        }, 500 / nextRecord.value.content.length)
+      }
     }
-  }
+  }, 500)
 }, { immediate: true })
+onUnmounted(() => {
+  clearInterval(timer.value)
+})
 </script>
 
 <template>
@@ -79,33 +91,36 @@ watch(nextRecord, () => {
       </TransitionGroup>
     </div>
     <div flex-none>
+      <form
+        v-if="nextRecord?.from === CHAT_SOURCE.ME && (nextRecord.isUnlocked ? nextRecord.isUnlocked() : true)"
+        min-h-8 w-full flex items-center justify-between rounded-full px-6 py-1 text-align-start ring-1 ring-gray-6
+        @submit.prevent="send"
+      >
+        <p v-if="!nextRecord.input">
+          {{ inputValue }}
+        </p>
+        <input v-else v-model="inputValue" flex-1 bg-transparent outline-none :disabled="!nextRecord?.input" placeholder="输入正确答案后才能发送">
+        <button flex flex-none items-center justify-end :disabled="inputValue !== nextRecord?.content" type="button" @click="send">
+          <div
+            v-if="inputValue === nextRecord?.content"
+            i-carbon-send-filled text-blue-5
+          />
+          <div
+            v-else
+            i-carbon-send text-gray-6
+          />
+        </button>
+      </form>
       <div
+        v-else
         min-h-8 w-full flex items-center justify-between rounded-full px-6 py-1 text-align-start ring-1 ring-gray-6
       >
-        <template v-if="nextRecord?.from === CHAT_SOURCE.ME && (nextRecord.isUnlocked ? nextRecord.isUnlocked() : true)">
-          <p v-if="!nextRecord.input">
-            {{ inputValue }}
-          </p>
-          <input v-else v-model="inputValue" flex-1 bg-transparent outline-none :disabled="!nextRecord?.input" placeholder="输入正确答案后才能发送">
-          <div flex flex-none items-center justify-end>
-            <div
-              v-if="inputValue === nextRecord?.content"
-              i-carbon-send-filled text-blue-5 @click="send"
-            />
-            <div
-              v-else
-              i-carbon-send text-gray-6
-            />
-          </div>
-        </template>
-        <template v-else>
-          <div />
-          <div flex flex-1 items-center justify-end>
-            <div
-              i-carbon-send text-gray-6
-            />
-          </div>
-        </template>
+        <div />
+        <div flex flex-1 items-center justify-end>
+          <div
+            i-carbon-send text-gray-6
+          />
+        </div>
       </div>
     </div>
   </div>

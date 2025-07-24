@@ -439,20 +439,6 @@ export const puppiesCouldBeMatched: PuppyCouldBeMatched[] = [
     },
   },
   {
-    type: PUPPIES_KEY.JIN_SHUI,
-    avatar: JinShuiImg,
-    name: puppyNameMap[PUPPIES_KEY.JIN_SHUI],
-    age: calculateAge('2025-04-27'),
-    profile: '感谢咩咩姐收留我，我一定乖乖嘟',
-  },
-  {
-    type: PUPPIES_KEY.PI_DAN_MOE,
-    avatar: PidanMoeImg,
-    name: '皮蛋萌',
-    age: calculateAge('1996-11-07'),
-    profile: '遇到小羊老师真的太好了',
-  },
-  {
     type: PUPPIES_KEY.PI_DAN,
     avatar: PidanImg,
     name: '皮蛋',
@@ -465,5 +451,19 @@ export const puppiesCouldBeMatched: PuppyCouldBeMatched[] = [
     name: '毛豆',
     age: calculateAge('2015-12-01'),
     profile: '哥哥不许欺负姐姐!',
+  },
+  {
+    type: PUPPIES_KEY.JIN_SHUI,
+    avatar: JinShuiImg,
+    name: puppyNameMap[PUPPIES_KEY.JIN_SHUI],
+    age: calculateAge('2025-04-27'),
+    profile: '感谢咩咩姐收留我，我一定乖乖嘟',
+  },
+  {
+    type: PUPPIES_KEY.PI_DAN_MOE,
+    avatar: PidanMoeImg,
+    name: '皮蛋萌',
+    age: calculateAge('1996-11-07'),
+    profile: '遇到小羊老师真的太好了',
   },
 ]
