@@ -321,10 +321,13 @@ const LChatHistory: IChatRecord[] = [{
   content: '我是一名资深的犬侦探，我已经对这个案子进行了深入的调查',
 }, {
   from: CHAT_SOURCE.OTHERS,
-  content: '根据我调查的结果，偷走金水蛋蛋的幕后黑手，应该就藏在皮蛋萌的“过去”之中',
+  content: '根据我调查的结果，偷走金水蛋蛋的幕后黑手，应该就藏在你与皮蛋萌的“回忆”之中',
 }, {
   from: CHAT_SOURCE.OTHERS,
-  content: '我只能言尽于此，希望金水早日找到自己的蛋蛋',
+  content: '剩下的就靠你自己调查了，希望你能早日找到金水的蛋蛋',
+}, {
+  from: CHAT_SOURCE.ME,
+  content: '…… 好的，谢谢',
 }]
 const jinshuiHistory: IChatRecord[] = [{
   from: CHAT_SOURCE.OTHERS,
